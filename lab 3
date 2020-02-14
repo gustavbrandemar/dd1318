@@ -1,0 +1,119 @@
+import text_encryption_function
+import sys
+import random
+import json
+
+def copy_text_file(in_file, out_file): #UPPGIFT 1
+    doc1 = open(in_file, 'r')
+    text = doc1.read()
+    doc1.close()
+    doc2 = open(out_file, 'w')
+    doc2.write(text)
+    doc2.close()
+#copy_text_file('namn.csv','my_copy.csv')
+
+
+def encrypt_file(in_file, out_file): #Uppgift 2!
+    doc1 = open(in_file, 'r')
+    text = doc1.read()
+    doc1.close()
+    text2 = text_encryption_function.encrypt(text)
+    doc2 = open(out_file, 'w')
+    doc2.write(text2)
+    doc2.close()
+#encrypt_file('namn.csv', 'secret_names')
+
+def user_dialogue(): #Uppgift 3
+    try:
+        encrypt_file(input('A file you want to encrypt '), input('Name of your encrypted file '))
+    except FileNotFoundError:
+        print('There is no such filename. Details:', sys.exc_info()[1:2])
+#user_dialogue()
+
+#def get_int_input(prompt_string):
+
+def get_int_input(prompt_string): #Uppgift 4
+    #input('only accepting integers', int)
+    while True:
+        try:
+            return prompt_string (input('ge mig ett heltal '))
+        except:
+            print('Nej det måste vara ett heltal...')
+            pass
+
+#get_int_input(int)
+
+#mitt_tal = input('ett tal')
+#print(type(mitt_tal))
+
+short_quiz_list_of_lists = [['Vad heter Norges huvudstad?', 'Oslo', 'Bergen', 'Köpenhamn'],
+['Vad står ABBA för?', 'Agneta Björn Benny Annefrid', 'Kalle och Lisa', 'Smarrig Sill']]
+
+def run_quiz(quiz_list_of_lists): #Uppgift 5
+    print('hej och välkommen till t quiz')
+
+    for a in range(0, len(quiz_list_of_lists)):
+        print('\n' + quiz_list_of_lists[a][0] + '\n')
+        correct_answer = quiz_list_of_lists[a][1]
+        alla_svar = quiz_list_of_lists[a][1:]
+        random.shuffle(alla_svar)
+
+        for b in range(0,len(alla_svar)):
+            print('alternativ ',b + 1,':', alla_svar[b] + '.', end=' ')
+        print('\n')
+        try:
+            sf = get_int_input(int)
+
+            if (alla_svar[sf-1]) == correct_answer:
+                print('Bra jobbat, det är rätt!')
+            else :
+                print('Fel!!, rätt svar är:', correct_answer)
+        except IndexError:
+            print(sf, 'är inte ett giltigt svar, du är dum')
+
+#run_quiz(short_quiz_list_of_lists)
+
+def get_quiz_list_handle_exceptions(): #Uppgift 6
+    csvfil = input('Name of the quizfile:')
+    try:
+        doc = open(csvfil, 'r')
+        frågor = doc.read()
+        doc.close()
+    except FileNotFoundError:
+        print('filen existerar inte, försök igen', sys.exc_info()[1:2])
+        sys.exit()
+
+    frågor.strip()
+    fråga = frågor.split('\n')
+    färdig_lista = list()
+
+    for a in range(0,len(fråga)):
+        oklar_lista = fråga[a]
+        färdig_lista.append(oklar_lista.split(';'))
+
+    for b in range(0,len(färdig_lista)):
+        if not len(färdig_lista[b]) == 4:
+            print('The file is not on the proper format. There needs to be four strings, separated by ; in each line of the file')
+            sys.exit()
+        else:
+            continue
+
+    return(färdig_lista)
+
+# run_quiz(get_quiz_list_handle_exceptions()) #Uppgift 7
+
+
+ql = get_quiz_list_handle_exceptions()
+json_string = json.dumps(ql, indent=2)
+fo = open("quiz.json", "w")
+fo.write(json_string)
+fo.close()
+
+#Uppgift 8
+#Den använder get_quiz_list_handle_exceptions för att omvandla t ex quiz.csv till en lista i python.
+#Sedan använder koden listan och skapar en jsonfil som får listan som innehåll.
+#Json verkar vara mer användbar än csv då det är en större standard och kan användas i flera olika
+#programmeringsspråk och i databaser.
+
+
+
